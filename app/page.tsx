@@ -25,7 +25,7 @@ import { ToggleTheme } from "@/components/theme/toggle-theme";
 export default function HomePage() {
   return (
     <main className="relative">
-      <div className="fixed bottom-4 right-1/2 z-50">
+      <div className="w-full flex justify-center fixed bottom-4 z-50">
         <ToggleTheme />
       </div>
       {/* Hero */}

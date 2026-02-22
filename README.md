@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dashed Border Card
 
-## Getting Started
+A drop-in React component that renders **customizable dashed borders** using SVG. Full control over dash length, gap size, border radius, stroke width, and color — all via Tailwind CSS classes, including hover states.
 
-First, run the development server:
+CSS `border-dashed` doesn't let you control dash length. This component uses an SVG `<rect>` with `stroke-dasharray` and `stroke="currentColor"`, so any Tailwind `text-*` class (including `hover:`) controls the border color.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Installation
+
+Copy `components/dashed-border-card.tsx` into your project. It only depends on your `cn()` utility.
+
+## Usage
+
+```tsx
+import { DashedBorderCard } from "@/components/dashed-border-card";
+
+{
+  /* Basic */
+}
+<DashedBorderCard className="rounded-lg p-8">
+  <p>Your content here</p>
+</DashedBorderCard>;
+
+{
+  /* Custom color */
+}
+<DashedBorderCard
+  strokeClassName="text-blue-500"
+  dashLength={16}
+  gapLength={6}
+  className="rounded-xl p-8"
+>
+  <p>Blue dashed border</p>
+</DashedBorderCard>;
+
+{
+  /* With hover transition */
+}
+<DashedBorderCard
+  strokeClassName="text-border hover:text-primary"
+  className="cursor-pointer rounded-lg p-8"
+>
+  <p>Hover me</p>
+</DashedBorderCard>;
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Props
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Prop              | Type        | Default         | Description                                                   |
+| ----------------- | ----------- | --------------- | ------------------------------------------------------------- |
+| `children`        | `ReactNode` | —               | Content inside the card                                       |
+| `className`       | `string`    | —               | Classes for the outer wrapper (padding, rounding, bg, etc.)   |
+| `strokeClassName` | `string`    | `"text-border"` | Tailwind `text-*` classes for stroke color. Supports `hover:` |
+| `dashLength`      | `number`    | `12`            | Length of each dash in pixels                                 |
+| `gapLength`       | `number`    | `8`             | Gap between dashes in pixels                                  |
+| `borderRadius`    | `number`    | `10`            | Border radius in pixels                                       |
+| `strokeWidth`     | `number`    | `1`             | Stroke width in pixels                                        |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Color Examples
 
-## Learn More
+```tsx
+{/* Design tokens */}
+<DashedBorderCard strokeClassName="text-primary" />
+<DashedBorderCard strokeClassName="text-foreground" />
+<DashedBorderCard strokeClassName="text-destructive" />
 
-To learn more about Next.js, take a look at the following resources:
+{/* Tailwind palette */}
+<DashedBorderCard strokeClassName="text-blue-500" />
+<DashedBorderCard strokeClassName="text-emerald-500" />
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+{/* Opacity */}
+<DashedBorderCard strokeClassName="text-foreground/50" />
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+{/* Hover transitions */}
+<DashedBorderCard strokeClassName="text-border hover:text-foreground" />
+<DashedBorderCard strokeClassName="text-muted-foreground/40 hover:text-primary" />
+<DashedBorderCard strokeClassName="text-blue-300 hover:text-blue-500" />
+<DashedBorderCard strokeClassName="text-border hover:text-destructive" />
+```
 
-## Deploy on Vercel
+## How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. An SVG `<rect>` is positioned absolutely over the container with `pointer-events-none`
+2. `stroke-dasharray` controls dash and gap length (CSS `border-dashed` can't do this)
+3. `stroke="currentColor"` inherits the CSS `color` property from the wrapper `<div>`
+4. Tailwind `text-*` classes set `color`, so they control the stroke
+5. `hover:text-*` works because the color classes live on the outer `<div>` (not the SVG)
+6. `transition-colors` is included by default for smooth hover animations
+7. Children are wrapped in `<div class="text-foreground">` so they don't inherit the stroke color
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
